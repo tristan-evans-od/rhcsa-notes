@@ -24,6 +24,8 @@ File permissions and ownership mean different things between simple files and di
 
 * The first bit in the permissions set in a file listing represents the special permission bits.
 
+Special permissions mean different things on files and directories:
+
 | Special Permission | On an Executable File                                                    | On a Directory                                                                    |
 |--------------------|--------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
 | SUID               | The effective user ID of the process is that of the file upon execution  | No effect.                                                                        |
@@ -33,6 +35,32 @@ File permissions and ownership mean different things between simple files and di
 * The "s" in the execute bit for the user owner is the SUID bit. 
 * The "s" in the execute bit for the group owner is the SGID bit.
 * The "t" in the execute bit for the other users is the sticky bit.
+
+There are also special file attributes that help control what anyone can do to different files.
+
+| Attribute | Description |
+|-----------|-------------|
+| append only (a) | Prevents deletion, but allows appending to file |
+| no dump (d) | Disallows backups of file with the `dump` command |
+| extent format (f) | Set with the ext4 filesystem; an attribute that cannot be removed |
+| immutable (i) | Prevents deletion or any type of change |
+
+There are several commands to manipulate file ownership, basic permissions, and attributes:
+
+* **chmod** - Change basic permissions of files
+* **chown** - Change ownership of files
+* **chgrp** - Change just the group owner of files
+* **chattr** - Change special attributes of files
+* **lsattr** - List special attributes of file
+
+RHEL handles `umask` like most other distributions, but does have some differences too:
+
+* The `umask` sets the default permissions of files and directories
+* In RHEL, you cannot configure `umask` to allow automatic creation of new files with executable permissions
+* When entering the `umask` command, it returns the 4-digit octal number which defines the default file and directory permissions
+* The default `umask` value is defined in `/etc/profile` and `/etc/bashrc` files
+* By default, user accounts above UID "200" have a umask of "002". All below "200" have a umask of "022".
+
 
 #### ACLs
 
