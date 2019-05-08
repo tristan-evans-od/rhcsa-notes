@@ -72,9 +72,9 @@ There are several commands used to manage ACLs:
 * **getfacl** - Displays the current ACLs of a file
 * **setfacl** - Sets the ACLs of a file, see examples below:
 
-`setfacl -m u:tristan:rwx /home/exam-prep/the-answers` (gives user "tristan" rwx permissions to specified file)
-`setfacl -x u:tristan /home/exam-prep/the-answers` (gives user "tristan" no permissions to specified file)
-`setfacl -b /home/exam-prep/the-answers` (removes all ACLs from file)
+`setfacl -m u:tristan:rwx /home/exam-prep/the-answers` (gives user "tristan" rwx permissions to specified file)  
+`setfacl -x u:tristan /home/exam-prep/the-answers` (gives user "tristan" no permissions to specified file)  
+`setfacl -b /home/exam-prep/the-answers` (removes all ACLs from file)  
 
 
 
