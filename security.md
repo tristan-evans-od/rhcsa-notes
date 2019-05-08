@@ -70,7 +70,20 @@ ACLs provide a second level of discretionary control that support overriding of 
 There are several commands used to manage ACLs:
 
 * **getfacl** - Displays the current ACLs of a file
-* **setfacl** - Sets the ACLs of a file, see examples below:
+* **setfacl** - Sets the ACLs of a file
+
+Here are the options for the `setfacl` command:
+
+| Switch | Description |
+|--------|-------------|
+| -b | Removes all ACL entries |
+| -k | Deletes default ACL entries |
+| -m | Modifies the ACLs of a file with specific user and group |
+| -n | Omits the recalculation of the mask entry |
+| -R | applies changes recursively |
+| -x | Removes a specific ACL entry |
+
+Here are some examples of the `setfacl` command:
 
 `setfacl -m u:tristan:rwx /home/exam-prep/the-answers` (gives user "tristan" rwx permissions to specified file)  
 `setfacl -x u:tristan /home/exam-prep/the-answers` (gives user "tristan" no permissions to specified file)  
