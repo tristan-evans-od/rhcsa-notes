@@ -11,9 +11,7 @@ File permissions and ownership mean different things between simple files and di
 | execute (x) | Permission to run file         | Permission to access files            |
 
 * Permissions granted to the group take precedence over those granted to other users.
-
 * Permissions granted to the owner take precedence over all other categories.
-
 * In the below example, users in group "test" cannot read, write, or execute the file.
 
 `-rwx---rwx. 1 root test 127 Dec 13 07:21 test.sh`
@@ -59,10 +57,26 @@ RHEL handles `umask` like most other distributions, but does have some differenc
 * In RHEL, you cannot configure `umask` to allow automatic creation of new files with executable permissions
 * When entering the `umask` command, it returns the 4-digit octal number which defines the default file and directory permissions
 * The default `umask` value is defined in `/etc/profile` and `/etc/bashrc` files
-* By default, user accounts above UID "200" have a umask of "002". All below "200" have a umask of "022".
+* By default, user accounts above UID "200" have a `umask` of "002". All below "200" have a `umask` of "022".
+
+#### Access Control Lists (ACL)
+
+ACLs provide a second level of discretionary control that support overriding of standard ugo/rwx permissions.
+
+* To use ACLs, you'll need to mount the appropriate filesystem with the `acl` option (default behavior)
+* To use ACLs, you'll need to setup execute permissions on the associated directories
+* ACLs are supported on the following filesystems: `ext4`, `XFS`, `NFS4`
+
+There are several commands used to manage ACLs:
+
+* **getfacl** - Displays the current ACLs of a file
+* **setfacl** - Sets the ACLs of a file, see examples below:
+
+`setfacl -m u:tristan:rwx /home/exam-prep/the-answers` (gives user "tristan" rwx permissions to specified file)
+`setfacl -x u:tristan /home/exam-prep/the-answers` (gives user "tristan" no permissions to specified file)
+`setfacl -b /home/exam-prep/the-answers` (removes all ACLs from file)
 
 
-#### ACLs
 
 
 #### Firewall
