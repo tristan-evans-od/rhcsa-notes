@@ -89,13 +89,66 @@ Here are some examples of the `setfacl` command:
 `setfacl -x u:tristan /home/exam-prep/the-answers` (gives user "tristan" no permissions to specified file)  
 `setfacl -b /home/exam-prep/the-answers` (removes all ACLs from file)  
 
-
-
-
 #### Firewall
 
+There exists on a default RHEL system three kinds of firewall management tools:
+
+* **iptables** - uses INPUT, OUTPUT and FORWARD chains to manage packet filtering and routing.
+* **firewall-cmd** - a command-line utility for the firewalld service
+* **firewall-config** - a GUI utility for the firewalld service
+
+The basic outline of a `iptables` command looks like so:
+
+`iptables -t tabletype <action_direction> <packet_pattern> -j <what_to_do>`
+
+* The "tabletype" can be:
+  * a `filter` which sets a rule for filtering packets (default)
+  * a `nat` configures Network Address Translation
+* The "action direction" refers to the type of action you are taking to the chain:
+  * **-A** - appends a rule to end of a chain
+  * **-D** - deletes a rule from a chain
+  * **-L** - lists the currently configured rules in a chain
+  * **-F** - flushes all the rules in the current `iptables` chain
+* If you are appending or deleting a chain, you'll want to apply it to network data traveling in one of three directions:
+  * **INPUT** - All incoming packets are checked against the rules in this chain
+  * **OUTPUT** - All outgoing packets are checked against the rules in this chain
+  * **FORWARD** - All packets received from one computer and being sent to another (routed) are checked against this chain's rules
+* The "packet pattern" is used to match packets based on destination IP, source IP, port or protocol type
+* The "what to do" tells `iptables` what to do with packets that match:
+  * **DROP** - The packet is dropped, no error message is returned to sender
+  * **REJECT** - The packet is dropped, an error message is returned to sender
+  * **ACCEPT** - The packet is allowed to proceed
+
+You can manage the actual `iptables` service using `systemctl`:
+
+`systemctl status iptables`
+
+You can manage firewalld using the command line utility `firewall-cmd`:
+
+* Get the default zone:
+
+`firewall-cmd --get-default-zone`
+
+* Set the default zone:
+
+`firewall-cmd --set-default-zone=internal`
+
+* List all the configured interfaces and services allowed through a zone:
+
+`firewall-cmd --list-all`
+
+* Use the `--permanent` switch for changes that persist through reboots
+
+* Use the `--zone` switch to make changes to specified zone, instead of the default
+
+* Use the `--add-port`, `--add-service`, `--remove-port`, `--remove-server` switches respectively
+
+* After changes have been made, reload the run-time configuration of the firewall:
+
+`firewall-cmd --reload`
 
 #### SSH
+
 
 
 #### SELinux
