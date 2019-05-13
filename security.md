@@ -4,11 +4,11 @@
 
 File permissions and ownership mean different things between simple files and directories.
 
-| Permission  | On a File                      | On a Directory                        |
-|-------------|--------------------------------|---------------------------------------|
-| read (r)    | Permission to read the file    | Permission to list files              |
-| write (w)   | Permission to change the file  | Permission to create and remove files |
-| execute (x) | Permission to run file         | Permission to access files            |
+| Permission | On a File | On a Directory |
+|-|-|-|
+| read (r) | Permission to read the file | Permission to list files |
+| write (w) | Permission to change the file | Permission to create and remove files |
+| execute (x) | Permission to run file | Permission to access files |
 
 * Permissions granted to the group take precedence over those granted to other users.
 * Permissions granted to the owner take precedence over all other categories.
@@ -24,11 +24,11 @@ File permissions and ownership mean different things between simple files and di
 
 Special permissions mean different things on files and directories:
 
-| Special Permission | On an Executable File                                                    | On a Directory                                                                    |
-|--------------------|--------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
-| SUID               | The effective user ID of the process is that of the file upon execution  | No effect.                                                                        |
-| SGID               | The effective group ID of the process is that of the fiel upon execution | Give files created in directory the same group ownership as that of the directory |
-| Sticky bit         | No effect.                                                               | Files in a directory can be renamed or removed only by their owners.              |
+| Special Permission | On an Executable File | On a Directory |
+|-|-|-|
+| SUID | The effective user ID of the process is that of the file upon execution | No effect. |
+| SGID | The effective group ID of the process is that of the fiel upon execution | Give files created in directory the same group ownership as that of the directory |
+| Sticky bit | No effect. | Files in a directory can be renamed or removed only by their owners. |
 
 * The "s" in the execute bit for the user owner is the SUID bit. 
 * The "s" in the execute bit for the group owner is the SGID bit.
@@ -37,7 +37,7 @@ Special permissions mean different things on files and directories:
 There are also special file attributes that help control what anyone can do to different files.
 
 | Attribute | Description |
-|-----------|-------------|
+|-|-|
 | append only (a) | Prevents deletion, but allows appending to file |
 | no dump (d) | Disallows backups of file with the `dump` command |
 | extent format (f) | Set with the ext4 filesystem; an attribute that cannot be removed |
@@ -75,7 +75,7 @@ There are several commands used to manage ACLs:
 Here are the options for the `setfacl` command:
 
 | Switch | Description |
-|--------|-------------|
+|-|-|
 | -b | Removes all ACL entries |
 | -k | Deletes default ACL entries |
 | -m | Modifies the ACLs of a file with specific user and group |
@@ -125,17 +125,11 @@ You can manage the actual `iptables` service using `systemctl`:
 
 You can manage firewalld using the command line utility `firewall-cmd`:
 
-* Get the default zone:
+* Use the `--get-default-zone` switch to get the default zone:
 
-`firewall-cmd --get-default-zone`
+* Use the `--set-default-zone` switch to set the default zone:
 
-* Set the default zone:
-
-`firewall-cmd --set-default-zone=internal`
-
-* List all the configured interfaces and services allowed through a zone:
-
-`firewall-cmd --list-all`
+* Use the `--list-all` switch to list all the configured interfaces and services allowed through a zone:
 
 * Use the `--permanent` switch for changes that persist through reboots
 
@@ -143,12 +137,49 @@ You can manage firewalld using the command line utility `firewall-cmd`:
 
 * Use the `--add-port`, `--add-service`, `--remove-port`, `--remove-server` switches respectively
 
-* After changes have been made, reload the run-time configuration of the firewall:
-
-`firewall-cmd --reload`
+* Use the `--reload` switch to reload the run-time configuration of the firewall:
 
 #### SSH
 
+There are several notable SSH-oriented utilities:
 
+* **sshd** - The daemon service; this must be running to receive inbound SSH requests.
+* **ssh-agent** - A program to hold private keys used for DSA, ECDSA, and RSA authentication. The idea is that the `ssh-agent` command is started in the beginning of an X session or a login session, and other programs are started as clients to the ssh-agent program.
+* **ssh-add** - Adds private key identities to the authentication agent, `ssh-agent`.
+* **ssh** - The SSH client which provides a secured shell connection to a remote system. To make this work with key-based authentication, you need a private key on the client and a public key on the server. Take the public key file, such as `id_rsa.pub`, and copy it to the server. Place it in the home directory of an authorized user in the `~/.ssh/authorized_keys` file.
+* **ssh-keygen** - A utility that creates private/public key pairs for SSH authentication. The `ssh-keygen -t` command will create a key pair based on the specified protocol.
+* **ssh-copy-id** - A script that copies a public key to a target remote system.
+
+Systems configured with SSH include configuration files in two different directories:
+
+* **/etc/ssh/** - System-wide configuration.
+* **~/.ssh/** - Per-user configuration.
+
+The `~/.ssh/` subdirectory can include the following files:
+
+* **authorized_keys** - Includes a list of public keys from remote users. Users with public encryption keys in this file can connect to remote systems. The system users and names are listed at the end of each public key copied to this file.
+* **id_dsa** - Includes the local private key based on the DSA algorithm.
+* **id_dsa.pub** - Includes the local public key for the user based on the DSA algorithm.
+* **id_ecdsa** - Inculdes the local private key for the user based on the ECDSA algorithm.
+* **id_ecdsa.pub** - Includes the local public key for the user based on the ECDSA algorithm.
+* **id_rsa** - Includes the local private key based on the RSA algorithm.
+* **id_rsa.pub** - Includes the local public key for the user based on the RSA algorithm.
+* **known_hosts** - Contains the public host keys from remote systems. The first time a user logs in to a system, she's prompted to accept the public key of the remote server.
+
+Most of the common issues with SSH key-based authentication are related to file permissions. The below table outlines how they should be set:
+
+| File | Permissions |
+|-|-|
+| private keys | 600 |
+| public keys | 644 |
+| ~/.ssh/ | 700 |
+
+To setup a private/public pair for key-based authentication:
+
+1. Generate a key pair: `ssh-keygen`
+  * `-b` specify size of bits of RSA keys
+  * `-t` specify the type of key to use
+1. Transmit the public key to remote system: `ssh-copy-id -i .ssh/id_rsa.pub tristan@tester1.example.com`
+1. SSH into the remote host: `ssh tristan@tester1.example.com`
 
 #### SELinux
