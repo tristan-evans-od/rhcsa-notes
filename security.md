@@ -1,6 +1,6 @@
-### Security
+## Security
 
-#### Basic File Permissions
+### Basic File Permissions
 
 File permissions and ownership mean different things between simple files and directories.
 
@@ -59,7 +59,7 @@ RHEL handles `umask` like most other distributions, but does have some differenc
 * The default `umask` value is defined in `/etc/profile` and `/etc/bashrc` files
 * By default, user accounts above UID "200" have a `umask` of "002". All below "200" have a `umask` of "022".
 
-#### Access Control Lists (ACL)
+### Access Control Lists (ACL)
 
 ACLs provide a second level of discretionary control that support overriding of standard ugo/rwx permissions.
 
@@ -89,7 +89,7 @@ Here are some examples of the `setfacl` command:
 `setfacl -x u:tristan /home/exam-prep/the-answers` (gives user "tristan" no permissions to specified file)  
 `setfacl -b /home/exam-prep/the-answers` (removes all ACLs from file)  
 
-#### Firewall
+### Firewall
 
 There exists on a default RHEL system three kinds of firewall management tools:
 
@@ -139,7 +139,7 @@ You can manage firewalld using the command line utility `firewall-cmd`:
 
 * Use the `--reload` switch to reload the run-time configuration of the firewall:
 
-#### SSH
+### SSH
 
 There are several notable SSH-oriented utilities:
 
@@ -179,7 +179,39 @@ To setup a private/public pair for key-based authentication:
 1. Generate a key pair: `ssh-keygen`
   * `-b` specify size of bits of RSA keys
   * `-t` specify the type of key to use
-1. Transmit the public key to remote system: `ssh-copy-id -i .ssh/id_rsa.pub tristan@tester1.example.com`
-1. SSH into the remote host: `ssh tristan@tester1.example.com`
+2. Transmit the public key to remote system: `ssh-copy-id -i .ssh/id_rsa.pub tristan@tester1.example.com`
+2. SSH into the remote host: `ssh tristan@tester1.example.com`
 
-#### SELinux
+### SELinux
+
+The SELinux security model is based on the below concepts:
+
+* **subjects** - A process; such as a running command or application.
+* **objects** - A file, a device, a socket, or in general any resource that can be accessed by a subject.
+* **actions** - What may be done by the subject to the object.
+* **context** - A label which is used by the SELinux security policy to determine whether a subject's action on an object is allowed or not.
+  * `ls -Z` lists files, including their SELinux security contexts.
+
+SELinux can be put into several different modes:
+
+* **enforcing** - Running and taking action on violations. When set to `enforcing`, it has two different modes:
+  * `targeted` - The default policy. Allows you to customize what is protected by SELinux in a fine-grain manner.
+  * `mls` - Supports layers of security between levels c0 and c3.
+* **permissive** - Running, not taking action on violations, but logging them.
+* **disabled** - Not running at all.
+
+The above settings can be set in `/etc/selinux/config` and will take affect upon reboot.
+
+There are several commands used to managed SELinux:
+
+* **getenforce** - Return the mode SELinux is set to. 
+* **setenforce** - Set SELinux to `enforcing`, `permissive` or `disabled` modes. This change is not persistent. To make permanent changes, update the `SELINUX` variable in `/etc/selinux/config`. If SELinux is set to `disabled`, you will need to make the update in the file and reboot system.
+* **sestatus** - Returns information about how SELinux is currently configured.
+* **semanage** - Use to manage different features of SELinux.
+  * `login -l` prints the status of current SELinux users.
+* **getsebool** - View boolean settings.
+* **setsebool** - Set boolean settings.
+* **chcon** - Change context of target.
+* **restorecon** - Restores target to default contexts defined in `/etc/selinux/targeted/context/files/file_contexts`.
+* **ausearch** - Can help filter for specific types of audit related problems.
+* **system-config-selinux** - Starts the SELinux GUI configuration utility.
