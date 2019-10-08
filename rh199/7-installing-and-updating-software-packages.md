@@ -72,4 +72,8 @@ gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8
 ```
 
+## Section 7.7 - Managing Package Module Streams
+
+The Application Stream (AppStream) repository provides all the applications you might want to run in a given userspace.
+
 
